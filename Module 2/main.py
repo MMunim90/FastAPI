@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Path
 import json
 
 app = FastAPI()
@@ -23,7 +23,7 @@ def all_student():
 
 
 @app.get("/all-students/{student_id}")
-def single_student(student_id: str):
+def single_student(student_id: str = Path(..., description="Student id of the student", example="S001")):
     data = load_data()
     
     if student_id in data:
