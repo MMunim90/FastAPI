@@ -20,3 +20,13 @@ def about():
 def all_student():
     data = load_data()
     return data
+
+
+@app.get("/all-students/{student_id}")
+def single_student(student_id: str):
+    data = load_data()
+    
+    if student_id in data:
+        return data[student_id]
+    else:
+        return "Student not found!!!"
