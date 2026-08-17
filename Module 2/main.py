@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, HTTPException
 import json
 
 app = FastAPI()
@@ -29,4 +29,4 @@ def single_student(student_id: str = Path(..., description="Student id of the st
     if student_id in data:
         return data[student_id]
     else:
-        return "Student not found!!!"
+        raise HTTPException(status_code=404, detail='Student not found!!!')
