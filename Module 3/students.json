@@ -1,0 +1,102 @@
+{
+  "S001": {
+    "name": "Rahim Ahmed",
+    "age": 15,
+    "class": 9,
+    "roll": 1,
+    "math_marks": 85,
+    "english_marks": 78,
+    "science_marks": 88,
+    "phone_number": "01710000001"
+  },
+  "S002": {
+    "name": "Karim Hasan",
+    "age": 15,
+    "class": 9,
+    "roll": 2,
+    "math_marks": 72,
+    "english_marks": 81,
+    "science_marks": 75,
+    "phone_number": "01710000002"
+  },
+  "S003": {
+    "name": "Nusrat Jahan",
+    "age": 14,
+    "class": 9,
+    "roll": 3,
+    "math_marks": 91,
+    "english_marks": 89,
+    "science_marks": 94,
+    "phone_number": "01710000003"
+  },
+  "S004": {
+    "name": "Sakib Hossain",
+    "age": 15,
+    "class": 9,
+    "roll": 4,
+    "math_marks": 68,
+    "english_marks": 74,
+    "science_marks": 71,
+    "phone_number": "01710000004"
+  },
+  "S005": {
+    "name": "Mim Akter",
+    "age": 14,
+    "class": 9,
+    "roll": 5,
+    "math_marks": 88,
+    "english_marks": 92,
+    "science_marks": 86,
+    "phone_number": "01710000005"
+  },
+  "S006": {
+    "name": "Tanvir Islam",
+    "age": 15,
+    "class": 9,
+    "roll": 6,
+    "math_marks": 76,
+    "english_marks": 69,
+    "science_marks": 82,
+    "phone_number": "01710000006"
+  },
+  "S007": {
+    "name": "Jannatul Ferdous",
+    "age": 14,
+    "class": 9,
+    "roll": 7,
+    "math_marks": 95,
+    "english_marks": 90,
+    "science_marks": 93,
+    "phone_number": "01710000007"
+  },
+  "S008": {
+    "name": "Fahim Rahman",
+    "age": 15,
+    "class": 9,
+    "roll": 8,
+    "math_marks": 81,
+    "english_marks": 77,
+    "science_marks": 79,
+    "phone_number": "01710000008"
+  },
+  "S009": {
+    "name": "Sumaiya Islam",
+    "age": 14,
+    "class": 9,
+    "roll": 9,
+    "math_marks": 87,
+    "english_marks": 84,
+    "science_marks": 90,
+    "phone_number": "01710000009"
+  },
+  "S010": {
+    "name": "Arif Chowdhury",
+    "age": 15,
+    "class": 9,
+    "roll": 10,
+    "math_marks": 73,
+    "english_marks": 80,
+    "science_marks": 76,
+    "phone_number": "01710000010"
+  }
+}
