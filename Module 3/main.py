@@ -34,16 +34,33 @@ def single_student(student_id: str = Path(..., description="Student id of the st
     
     
 @app.get("/sort")
-def sort_student(sorted_by: str = Query(..., description="Sort on the basis of class, age, roll, marks"), ):
+def sort_student(sorted_by: str = Query(..., description="Sort on the basis of class, age, roll, marks"), order: str = Query('asc', description="choose order: asc or desc")):
     
     valid_fields = ["age", "class", "roll", "math_marks", "english_marks", "science_marks"]
     
     if sorted_by not in valid_fields:
         raise HTTPException(status_code=404, detail=f'Invalid field, select from {valid_fields}')
     
+    if order not in ['asc', 'desc']:
+        raise HTTPException(status_code=404, detail="Choose between asc or desc")
+    
     data = load_data()
     
-    sorted_data = list(data.values())
-    sorted_data.sort(key = lambda x:x[sorted_by], reverse=True)
     
-    return sorted_data
+    # 1
+    # sort_order = True if order == 'desc' else False
+    
+    # sorted_data = list(data.values())
+    # sorted_data.sort(key = lambda x:x[sorted_by], reverse=sort_order)
+    
+    
+    # 2
+    if order == 'asc':
+        sorted_data = list(data.values())
+        sorted_data.sort(key = lambda x:x[sorted_by])
+        return sorted_data
+    
+    else:
+        sorted_data = list(data.values())
+        sorted_data.sort(key = lambda x:x[sorted_by], reverse=True)
+        return sorted_data
