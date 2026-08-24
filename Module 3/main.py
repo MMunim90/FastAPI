@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Path, HTTPException, Query
+from fastapi import FastAPI, Path, HTTPException, Query, Body
 import json
 
 app = FastAPI()
@@ -7,6 +7,10 @@ def load_data():
     with open('students.json', 'r') as f:
         data = json.load(f)
     return data
+
+def upload_data(data):
+    with open('students.json', 'w') as f:
+        json.dump(data, f)
 
 @app.get("/")
 def hello():
@@ -64,3 +68,17 @@ def sort_student(sorted_by: str = Query(..., description="Sort on the basis of c
         sorted_data = list(data.values())
         sorted_data.sort(key = lambda x:x[sorted_by], reverse=True)
         return sorted_data
+    
+    
+    
+# post request
+@app.post("/add_new_student")
+def add_new_student(student: dict = Body()):
+    data = load_data()
+    
+    student_id = student["id"]
+    data[student_id] = student
+    del data[student_id]["id"]
+    
+    upload_data(data)
+    return "Successfully student created!!!"
