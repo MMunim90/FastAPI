@@ -1,7 +1,24 @@
 from fastapi import FastAPI, Path, HTTPException, Query, Body
+from pydantic import BaseModel, Field
+from typing import Annotated
 import json
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
+
+class Student(BaseModel):
+    id: Annotated[str, Field(..., description="Student id of the student", json_schema_extra={"example": "S001"})]
+    name: Annotated[str, Field(..., description="Name of the student", json_schema_extra={"example": "Karim Benzema"})]
+    age: Annotated[int, Field(..., gt=2, lt=36, description="Age of the student", json_schema_extra={"example": 12})]
+    student_class: Annotated[int, Field(..., gt=0, lt=13, description="Class of the student", json_schema_extra={"example": 7})]
+    roll: Annotated[int, Field(..., gt=0, description="Roll of the student", json_schema_extra={"example": 1})]
+    math_marks: Annotated[int, Field(..., gt=0, lt=101, description="Math Marks of the student", json_schema_extra={"example": 94})]
+    english_marks: Annotated[int, Field(..., gt=0, lt=101, description="English Marks of the student", json_schema_extra={"example": 85})]
+    science_marks: Annotated[int, Field(..., gt=0, lt=101, description="Science Marks of the student", json_schema_extra={"example": 97})]
+    phone: Annotated[str, Field(..., description="Phone Number of the student", json_schema_extra={"example": "01XXX-XXXXXX"})]
+
+
+
 
 def load_data():
     with open('students.json', 'r') as f:
@@ -27,7 +44,7 @@ def all_student():
 
 
 @app.get("/all-students/{student_id}")
-def single_student(student_id: str = Path(..., description="Student id of the student", example="S001")):
+def single_student(student_id: str = Path(..., description="Student id of the student", examples="S001")):
     data = load_data()
     
     if student_id in data:
@@ -38,9 +55,9 @@ def single_student(student_id: str = Path(..., description="Student id of the st
     
     
 @app.get("/sort")
-def sort_student(sorted_by: str = Query(..., description="Sort on the basis of class, age, roll, marks"), order: str = Query('asc', description="choose order: asc or desc")):
+def sort_student(sorted_by: str = Query(..., description="Sort on the basis of student_class, age, roll, marks"), order: str = Query('asc', description="choose order: asc or desc")):
     
-    valid_fields = ["age", "class", "roll", "math_marks", "english_marks", "science_marks"]
+    valid_fields = ["age", "student_class", "roll", "math_marks", "english_marks", "science_marks"]
     
     if sorted_by not in valid_fields:
         raise HTTPException(status_code=404, detail=f'Invalid field, select from {valid_fields}')
@@ -73,12 +90,19 @@ def sort_student(sorted_by: str = Query(..., description="Sort on the basis of c
     
 # post request
 @app.post("/add_new_student")
-def add_new_student(student: dict = Body()):
+def add_new_student(student: Student):
     data = load_data()
-    
-    student_id = student["id"]
-    data[student_id] = student
-    del data[student_id]["id"]
+
+    if student.id in data:
+        raise HTTPException(status_code=400, detail='Student id already exists!!!')
+
+    # 1
+    # student_id = student.id
+    # data[student_id] = student.model_dump()
+    # del data[student_id]["id"]
+
+    # 2
+    data[student.id] = student.model_dump(exclude=["id"])
     
     upload_data(data)
-    return "Successfully student created!!!"
+    return JSONResponse(status_code= 201, content={'message': 'Successfully student created!!!'})
