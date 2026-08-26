@@ -1,0 +1,106 @@
+[
+  {
+    "book_id": 1,
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "genre": "history",
+    "pages": 443,
+    "rating": 4.8
+  },
+  {
+    "book_id": 2,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "genre": "fiction",
+    "pages": 208,
+    "rating": 4.5
+  },
+  {
+    "book_id": 3,
+    "title": "A Brief History of Time",
+    "author": "Stephen Hawking",
+    "genre": "science",
+    "pages": 212,
+    "rating": 4.6
+  },
+  {
+    "book_id": 4,
+    "title": "1984",
+    "author": "George Orwell",
+    "genre": "fiction",
+    "pages": 328,
+    "rating": 4.7
+  },
+  {
+    "book_id": 5,
+    "title": "Steve Jobs",
+    "author": "Walter Isaacson",
+    "genre": "biography",
+    "pages": 656,
+    "rating": 4.6
+  },
+  {
+    "book_id": 6,
+    "title": "The Gene: An Intimate History",
+    "author": "Siddhartha Mukherjee",
+    "genre": "science",
+    "pages": 592,
+    "rating": 4.7
+  },
+  {
+    "book_id": 7,
+    "title": "Guns, Germs, and Steel",
+    "author": "Jared Diamond",
+    "genre": "history",
+    "pages": 528,
+    "rating": 4.5
+  },
+  {
+    "book_id": 8,
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "genre": "fiction",
+    "pages": 281,
+    "rating": 4.8
+  },
+  {
+    "book_id": 9,
+    "title": "Educated",
+    "author": "Tara Westover",
+    "genre": "biography",
+    "pages": 334,
+    "rating": 4.7
+  },
+  {
+    "book_id": 10,
+    "title": "Astrophysics for People in a Hurry",
+    "author": "Neil deGrasse Tyson",
+    "genre": "science",
+    "pages": 224,
+    "rating": 4.6
+  },
+  {
+    "book_id": 11,
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "genre": "fiction",
+    "pages": 658,
+    "rating": 4.7
+  },
+  {
+    "book_id": 12,
+    "title": "Cosmos",
+    "author": "Carl Sagan",
+    "genre": "science",
+    "pages": 384,
+    "rating": 4.8
+  },
+  {
+    "book_id": 13,
+    "title": "The Diary of a Young Girl",
+    "author": "Anne Frank",
+    "genre": "biography",
+    "pages": 283,
+    "rating": 4.7
+  }
+]
