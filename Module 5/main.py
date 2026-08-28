@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Path, HTTPException, Query, Body
 from pydantic import BaseModel, Field
-from typing import Annotated
+from typing import Annotated, Optional
 import json
 from fastapi.responses import JSONResponse
 
@@ -17,6 +17,17 @@ class Student(BaseModel):
     science_marks: Annotated[int, Field(..., gt=0, lt=101, description="Science Marks of the student", json_schema_extra={"example": 97})]
     phone: Annotated[str, Field(..., description="Phone Number of the student", json_schema_extra={"example": "01XXX-XXXXXX"})]
 
+
+
+class StudentUpdate(BaseModel):
+    name: Annotated[Optional[str], Field(default=None)]
+    age: Annotated[Optional[int], Field(default=None)]
+    student_class: Annotated[Optional[int], Field(default=None)]
+    roll: Annotated[Optional[int], Field(default=None)]
+    math_marks: Annotated[Optional[int], Field(default=None)]
+    english_marks: Annotated[Optional[int], Field(default=None)]
+    science_marks: Annotated[Optional[int], Field(default=None)]
+    phone: Annotated[Optional[str], Field(default=None)]
 
 
 
@@ -91,6 +102,27 @@ def sort_student(sorted_by: str = Query(..., description="Sort on the basis of s
 # post request
 @app.post("/add_new_student")
 def add_new_student(student: Student):
+    data = load_data()
+
+    if student.id in data:
+        raise HTTPException(status_code=400, detail='Student id already exists!!!')
+
+    # 1
+    # student_id = student.id
+    # data[student_id] = student.model_dump()
+    # del data[student_id]["id"]
+
+    # 2
+    data[student.id] = student.model_dump(exclude=["id"])
+    
+    upload_data(data)
+    return JSONResponse(status_code= 201, content={'message': 'Successfully student created!!!'})
+
+
+
+# put request
+@app.put("/update_student/{student_id}")
+def update_student(student_id: str, student: Student):
     data = load_data()
 
     if student.id in data:
