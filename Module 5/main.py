@@ -122,19 +122,14 @@ def add_new_student(student: Student):
 
 # put request
 @app.put("/update_student/{student_id}")
-def update_student(student_id: str, student: Student):
+def update_student(student_id: str, student: StudentUpdate):
     data = load_data()
 
-    if student.id in data:
-        raise HTTPException(status_code=400, detail='Student id already exists!!!')
+    if student_id not in data:
+        raise HTTPException(status_code=404, detail='Student not exists!!!')
 
-    # 1
-    # student_id = student.id
-    # data[student_id] = student.model_dump()
-    # del data[student_id]["id"]
 
-    # 2
-    data[student.id] = student.model_dump(exclude=["id"])
+    data[student_id].update(student.model_dump(exclude_unset=True))
     
     upload_data(data)
-    return JSONResponse(status_code= 201, content={'message': 'Successfully student created!!!'})
+    return JSONResponse(status_code= 200, content={'message': 'Student updated successfully!!!'})
