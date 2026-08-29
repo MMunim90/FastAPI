@@ -1,11 +1,21 @@
 from fastapi import FastAPI, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy.orm import Session
+from pydantic import BaseModel, Field
 import models
 from models import Todos
 from database import engine, SessionLocal
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
+
+class Todo(BaseModel):
+    id : int 
+    title : str
+    description : str = Field(max_length=100)
+    priority : int = Field(gt=0, lt=6)
+    completed : bool
+
 models.Base.metadata.create_all(bind=engine)
 
 def get_db():
@@ -32,4 +42,12 @@ def red_specific_todos(db : db_dependency, todo_id : int):
         return specific_todo
     else:
         raise HTTPException(status_code=404, detail='Todo Not Found')
-        
+
+
+@app.post('/create-todo')
+def create_todos(db : db_dependency, new_todo : Todo):
+    todo_model = Todos(**new_todo.model_dump())
+    db.add(todo_model)
+    db.commit()
+
+    return JSONResponse(status_code=201, content={'message' : 'Todo created successfully'})
