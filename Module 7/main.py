@@ -6,6 +6,7 @@ import models
 from models import Todos
 from database import engine, SessionLocal
 from fastapi.responses import JSONResponse
+from router import auth
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ class TodoUpdate(BaseModel):
     completed : Optional[bool] = Field(default=False)
 
 models.Base.metadata.create_all(bind=engine)
+app.include_router(auth.router)
 
 def get_db():
     db = SessionLocal()
