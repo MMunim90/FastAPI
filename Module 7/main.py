@@ -14,13 +14,13 @@ class Todo(BaseModel):
     title : str
     description : str = Field(max_length=100)
     priority : int = Field(gt=0, lt=6)
-    completed : bool
+    completed : bool = Field(default=False)
 
 class TodoUpdate(BaseModel):
     title : Optional[str] = Field(default=None)
     description : Optional[str] = Field(default=None, max_length=100)
     priority : Optional[int] = Field(default=None, gt=0, lt=6)
-    completed : Optional[bool] = Field(default=None)
+    completed : Optional[bool] = Field(default=False)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -74,3 +74,17 @@ def update_todos(db : db_dependency, todo_id : int, update_todo : TodoUpdate):
 
     db.commit()
     return JSONResponse(status_code=200, content={'message' : 'Todo updated successfully'})
+
+
+@app.delete('/delete_todo/{todo_id}')
+def update_todos(db : db_dependency, todo_id : int):
+
+    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+
+    if todo is None:
+        raise HTTPException(status_code=404, detail='Todo Not Found')
+
+    db.query(Todos).filter(Todos.id == todo_id).delete()
+
+    db.commit()
+    return JSONResponse(status_code=200, content={'message' : 'Todo deleted successfully'})
