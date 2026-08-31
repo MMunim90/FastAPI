@@ -101,14 +101,14 @@ def update_movies(db : db_dependency, movie_id : int, update_movie : MovieUpdate
 
 
 @app.delete('/movies/{movie_id}')
-def update_todos(db : db_dependency, todo_id : int):
+def delete_movies(db : db_dependency, movie_id : int):
 
-    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+    movie = db.query(Movies).filter(Movies.id == movie_id).first()
 
-    if todo is None:
-        raise HTTPException(status_code=404, detail='Todo Not Found')
+    if movie is None:
+        raise HTTPException(status_code=404, detail='Movie Not Found')
 
-    db.query(Todos).filter(Todos.id == todo_id).delete()
+    db.query(Movies).filter(Movies.id == movie_id).delete()
 
     db.commit()
-    return JSONResponse(status_code=200, content={'message' : 'Todo deleted successfully'})
+    return JSONResponse(status_code=200, content={'message' : 'Movie deleted successfully'})
