@@ -85,19 +85,19 @@ def create_movies(db : db_dependency, new_movie : MovieCreate):
 
 
 @app.put('/movies/{movie_id}')
-def update_todos(db : db_dependency, todo_id : int, update_todo : MovieUpdate):
-    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+def update_movies(db : db_dependency, movie_id : int, update_movie : MovieUpdate):
+    movie = db.query(Movies).filter(Movies.id == movie_id).first()
 
-    if todo is None:
-        raise HTTPException(status_code=404, detail='Todo Not Found')
+    if movie is None:
+        raise HTTPException(status_code=404, detail='Movie Not Found')
 
-    update_data = update_todo.model_dump(exclude_unset=True)
+    update_data = update_movie.model_dump(exclude_unset=True)
 
     for key,value in update_data.items():
-        setattr(todo,key,value)
+        setattr(movie,key,value)
 
     db.commit()
-    return JSONResponse(status_code=200, content={'message' : 'Todo updated successfully'})
+    return JSONResponse(status_code=200, content={'message' : 'Movie updated successfully'})
 
 
 @app.delete('/movies/{movie_id}')
