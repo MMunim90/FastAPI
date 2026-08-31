@@ -42,7 +42,7 @@ def read_todos(db : db_dependency):
 
 
 @app.get('/todo/{todo_id}')
-def red_specific_todos(db : db_dependency, todo_id : int):
+def read_specific_todos(db : db_dependency, todo_id : int):
     specific_todo = db.query(Todos).filter(Todos.id == todo_id).first()
 
     if specific_todo is not None:
@@ -78,7 +78,7 @@ def update_todos(db : db_dependency, todo_id : int, update_todo : TodoUpdate):
 
 
 @app.delete('/delete_todo/{todo_id}')
-def update_todos(db : db_dependency, todo_id : int):
+def delete_todos(db : db_dependency, todo_id : int):
 
     todo = db.query(Todos).filter(Todos.id == todo_id).first()
 
