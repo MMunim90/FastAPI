@@ -43,7 +43,7 @@ def get_all_movies(db : db_dependency):
 
 @app.get('/movies/{movie_id}')
 def get_specific_movies(db : db_dependency, movie_id : int):
-    specific_movie = db.query(Movies).filter(Movies.id == movie_id).first()
+    specific_movie = db.query(Movies).filter(Movies.movie_id == movie_id).first()
 
     if specific_movie is not None:
         return specific_movie
@@ -76,6 +76,12 @@ def sort_books(sorted_by: str = Query(..., description="Sort movies on the basis
 
 @app.post('/create_movies')
 def create_movies(db : db_dependency, new_movie : MovieCreate):
+
+    specific_movie = db.query(Movies).filter(Movies.movie_id == new_movie.movie_id).first()
+    
+    if specific_movie is not None:
+        raise HTTPException(status_code=400, detail='Movie is already exists!!!')
+
     movie_model = Movies(**new_movie.model_dump())
     db.add(movie_model)
     db.commit()
