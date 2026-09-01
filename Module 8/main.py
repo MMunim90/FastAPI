@@ -22,7 +22,7 @@ class MovieUpdate(BaseModel):
     director : Optional[str] = Field(default=None, max_length=100)
     genre : Optional[str] = Field(default=None)
     duration : Optional[int] = Field(default=None)
-    rating : Optional[int] = Field(default=None, gt=0, lt=6)
+    rating : Optional[float] = Field(default=None, gt=0, lt=6)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -92,7 +92,7 @@ def create_movies(db : db_dependency, new_movie : MovieCreate):
 
 @app.put('/movies/{movie_id}')
 def update_movies(db : db_dependency, movie_id : int, update_movie : MovieUpdate):
-    movie = db.query(Movies).filter(Movies.id == movie_id).first()
+    movie = db.query(Movies).filter(Movies.movie_id == movie_id).first()
 
     if movie is None:
         raise HTTPException(status_code=404, detail='Movie Not Found')
