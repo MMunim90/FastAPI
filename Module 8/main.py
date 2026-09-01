@@ -109,12 +109,12 @@ def update_movies(db : db_dependency, movie_id : int, update_movie : MovieUpdate
 @app.delete('/movies/{movie_id}')
 def delete_movies(db : db_dependency, movie_id : int):
 
-    movie = db.query(Movies).filter(Movies.id == movie_id).first()
+    movie = db.query(Movies).filter(Movies.movie_id == movie_id).first()
 
     if movie is None:
         raise HTTPException(status_code=404, detail='Movie Not Found')
 
-    db.query(Movies).filter(Movies.id == movie_id).delete()
+    db.query(Movies).filter(Movies.movie_id == movie_id).delete()
 
     db.commit()
     return JSONResponse(status_code=200, content={'message' : 'Movie deleted successfully'})
