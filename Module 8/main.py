@@ -14,15 +14,15 @@ class MovieCreate(BaseModel):
     title : str
     director : str = Field(max_length=100)
     genre : str
-    duration : int
-    rating : float = Field(gt=0, lt=6)
+    duration : int = Field(ge=0)
+    rating : float = Field(ge=0, lt=6)
 
 class MovieUpdate(BaseModel):
     title : Optional[str] = Field(default=None)
     director : Optional[str] = Field(default=None, max_length=100)
     genre : Optional[str] = Field(default=None)
-    duration : Optional[int] = Field(default=None)
-    rating : Optional[float] = Field(default=None, gt=0, lt=6)
+    duration : Optional[int] = Field(default=None, ge=0)
+    rating : Optional[float] = Field(default=None, ge=0, lt=6)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -41,6 +41,28 @@ def get_all_movies(db : db_dependency):
     return db.query(Movies).all()
 
 
+@app.get("/movies/sort")
+def sort_movies(db : db_dependency, sort_by: str = Query('rating', description="Sort movies on the basis of duration, rating"), order: str = Query('desc', description="choose order: asc or desc")):
+    
+    valid_fields = ["duration", "rating"]
+    
+    if sort_by not in valid_fields:
+        raise HTTPException(status_code=404, detail=f'Invalid field, select from {valid_fields}')
+    
+    if order not in ['asc', 'desc']:
+        raise HTTPException(status_code=404, detail="Choose between asc or desc")
+    
+    data = db.query(Movies).all()  
+    
+    if order == 'asc':
+        data.sort(key = lambda movie:getattr(movie, sort_by))
+        return data
+    
+    else:
+        data.sort(key = lambda movie:getattr(movie, sort_by), reverse=True)
+        return data
+
+
 @app.get('/movies/{movie_id}')
 def get_specific_movies(db : db_dependency, movie_id : int):
     specific_movie = db.query(Movies).filter(Movies.movie_id == movie_id).first()
@@ -51,36 +73,21 @@ def get_specific_movies(db : db_dependency, movie_id : int):
         raise HTTPException(status_code=404, detail='Movie Not Found')
 
 
-@app.get("/movies/sort")
-def sort_books(sorted_by: str = Query(..., description="Sort movies on the basis of duration, rating"), order: str = Query('desc', description="choose order: asc or desc")):
-    
-    valid_fields = ["duration", "rating"]
-    
-    if sorted_by not in valid_fields:
-        raise HTTPException(status_code=404, detail=f'Invalid field, select from {valid_fields}')
-    
-    if order not in ['asc', 'desc']:
-        raise HTTPException(status_code=404, detail="Choose between asc or desc")
-    
-    data = load_data()
-    
-    
-    if order == 'asc':
-        data.sort(key = lambda x:x[sorted_by])
-        return data
-    
-    else:
-        data.sort(key = lambda x:x[sorted_by], reverse=True)
-        return data
-
-
 @app.post('/create_movies')
 def create_movies(db : db_dependency, new_movie : MovieCreate):
+
+    if new_movie.duration < 0:
+        raise HTTPException(status_code=422, detail='Movie duration cannot be negetive!!!')
 
     specific_movie = db.query(Movies).filter(Movies.movie_id == new_movie.movie_id).first()
     
     if specific_movie is not None:
         raise HTTPException(status_code=400, detail='Movie is already exists!!!')
+
+    valid_genre = ["action", "comedy", "drama", "thriller"]
+
+    if new_movie.genre not in valid_genre:
+        raise HTTPException(status_code=422, detail=f'Invalid genre, select from {valid_genre}')
 
     movie_model = Movies(**new_movie.model_dump())
     db.add(movie_model)
