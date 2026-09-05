@@ -26,7 +26,7 @@ def authenticate_user(username, password, db):
 
     if user is None:
         return False
-    if bcrypt_context.verify(Users.hash_password == password):
+    if bcrypt_context.verify(password, user.hash_password):
         return True
     return False
 
