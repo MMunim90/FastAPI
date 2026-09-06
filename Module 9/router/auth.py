@@ -7,10 +7,19 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from database import SessionLocal
 from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter()
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+
 
 class CreateUsers(BaseModel):
     email : str
