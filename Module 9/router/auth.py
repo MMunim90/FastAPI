@@ -10,6 +10,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
 import os
 from dotenv import load_dotenv
+from datetime import timedelta, datetime, timezone
 
 load_dotenv()
 
@@ -36,8 +37,16 @@ def authenticate_user(username, password, db):
     if user is None:
         return False
     if bcrypt_context.verify(password, user.hash_password):
-        return True
+        return user
     return False
+
+
+def create_access_token(username: str, user_id: int, expires_delta: timedelta):
+    encode = {"sub" : username, "id" : user_id}
+    expires = datetime.now(timezone.utc) + expires_delta
+
+    encode.update({"exp" : expires})
+    return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def get_db():
@@ -72,7 +81,9 @@ def login_user(db : db_dependency, form_data : Annotated[OAuth2PasswordRequestFo
 
     user = authenticate_user(form_data.username, form_data.password, db)
 
-    if user == True:
-        return "Login Successfully!!!"
-    else:
+    if not user:
         return "Invalid Username or Password!!!"
+
+    token = create_access_token(user.username, user.id, timedelta(minutes=30))
+
+    return {'access_token' : token, 'token_type' : 'bearer'}
