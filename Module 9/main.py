@@ -7,6 +7,7 @@ from models import Todos
 from database import engine, SessionLocal
 from fastapi.responses import JSONResponse
 from router import auth
+from router.auth import get_current_user
 
 app = FastAPI()
 
@@ -34,6 +35,7 @@ def get_db():
         db.close()
 
 db_dependency = Annotated[Session, Depends(get_db)]
+user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 @app.get('/')
@@ -52,8 +54,11 @@ def read_specific_todos(db : db_dependency, todo_id : int):
 
 
 @app.post('/create-todo')
-def create_todos(db : db_dependency, new_todo : Todo):
-    todo_model = Todos(**new_todo.model_dump())
+def create_todos(user : user_dependency, db : db_dependency, new_todo : Todo):
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+
+    todo_model = Todos(**new_todo.model_dump(), owner_id = user.get('id'))
     db.add(todo_model)
     db.commit()
 
