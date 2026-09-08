@@ -39,13 +39,20 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
 @app.get('/')
-def read_todos(db : db_dependency):
-    return db.query(Todos).all()
+def read_todos(user : user_dependency, db : db_dependency):
+
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+    
+    return db.query(Todos).filter(Todos.owner_id == user.get('id')).all()
 
 
 @app.get('/todo/{todo_id}')
-def read_specific_todos(db : db_dependency, todo_id : int):
-    specific_todo = db.query(Todos).filter(Todos.id == todo_id).first()
+def read_specific_todos(user : user_dependency, db : db_dependency, todo_id : int):
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+    
+    specific_todo = db.query(Todos).filter(Todos.owner_id == user.get('id')).filter(Todos.id == todo_id).first()
 
     if specific_todo is not None:
         return specific_todo
