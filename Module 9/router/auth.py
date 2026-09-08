@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from models import Users
 from fastapi.responses import JSONResponse
@@ -6,8 +6,8 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import Annotated
 from database import SessionLocal
-from fastapi.security import OAuth2PasswordRequestForm
-from jose import jwt
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from jose import jwt, JWTError
 import os
 from dotenv import load_dotenv
 from datetime import timedelta, datetime, timezone
@@ -17,6 +17,7 @@ load_dotenv()
 router = APIRouter()
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+OAuth2_bearer = OAuth2PasswordBearer(tokenUrl='login')
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -47,6 +48,21 @@ def create_access_token(username: str, user_id: int, expires_delta: timedelta):
 
     encode.update({"exp" : expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def get_current_user(token: Annotated[str, Depends(OAuth2_bearer)]):
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+        username : str = payload.get('sub')
+        user_id : int = payload.get('id')
+
+        if username is None or user_id is None:
+            raise HTTPException(status_code=404, detail='User Not Found!!!')
+
+        return {'username' : username, 'id' : user_id}
+    except:
+        raise HTTPException(status_code=404, detail='User Not Found!!!')
 
 
 def get_db():
