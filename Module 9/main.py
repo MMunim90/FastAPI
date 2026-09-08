@@ -94,14 +94,17 @@ def update_todos(user : user_dependency, db : db_dependency, todo_id : int, upda
 
 
 @app.delete('/delete_todo/{todo_id}')
-def delete_todos(db : db_dependency, todo_id : int):
+def delete_todos(user : user_dependency, db : db_dependency, todo_id : int):
 
-    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+
+    todo = db.query(Todos).filter(Todos.owner_id == user.get('id')).filter(Todos.id == todo_id).first()
 
     if todo is None:
         raise HTTPException(status_code=404, detail='Todo Not Found')
 
-    db.query(Todos).filter(Todos.id == todo_id).delete()
+    db.query(Todos).filter(Todos.owner_id == user.get('id')).filter(Todos.id == todo_id).delete()
 
     db.commit()
     return JSONResponse(status_code=200, content={'message' : 'Todo deleted successfully'})
