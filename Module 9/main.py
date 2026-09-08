@@ -74,8 +74,12 @@ def create_todos(user : user_dependency, db : db_dependency, new_todo : Todo):
 
 
 @app.put('/update_todo/{todo_id}')
-def update_todos(db : db_dependency, todo_id : int, update_todo : TodoUpdate):
-    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+def update_todos(user : user_dependency, db : db_dependency, todo_id : int, update_todo : TodoUpdate):
+
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+
+    todo = db.query(Todos).filter(Todos.owner_id == user.get('id')).filter(Todos.id == todo_id).first()
 
     if todo is None:
         raise HTTPException(status_code=404, detail='Todo Not Found')
