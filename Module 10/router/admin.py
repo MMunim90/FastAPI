@@ -34,6 +34,23 @@ def read_all_todos(user : user_dependency, db : db_dependency):
     user_role = user.get('role')
 
     if user is None or user_role != 'admin':
-        raise HTTPException(status_code=401, detail="Unauthorized user")
+        raise HTTPException(status_code=401, detail="Unauthorized user!")
 
     return db.query(Todos).all()
+
+
+@router.delete('/admin/delete_todo/{todo_id}')
+def delete_todos_by_admin(user : user_dependency, db : db_dependency, todo_id : int):
+
+    if user is None or user.get('role') != 'admin':
+        raise HTTPException(status_code=401, detail="Unauthorized user!")
+
+    todo = db.query(Todos).filter(Todos.id == todo_id).first()
+
+    if todo is None:
+        raise HTTPException(status_code=404, detail='Todo Not Found')
+
+    db.query(Todos).filter(Todos.id == todo_id).delete()
+
+    db.commit()
+    return JSONResponse(status_code=200, content={'message' : 'Todo deleted successfully'})
