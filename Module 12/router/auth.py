@@ -41,6 +41,11 @@ class UpdateUser(BaseModel):
     phone_number : Optional[str] = Field(default=None)
 
 
+class UpdatePassword(BaseModel):
+    current_password : str
+    new_password : str
+
+
 def authenticate_user(username, password, db):
     user = db.query(Users).filter(Users.username == username).first()
 
@@ -110,7 +115,7 @@ def login_user(db : db_dependency, form_data : Annotated[OAuth2PasswordRequestFo
     user = authenticate_user(form_data.username, form_data.password, db)
 
     if not user:
-        return "Invalid Username or Password!!!"
+        raise HTTPException(status_code=401, detail="Invalid Username or Password!!!")
 
     token = create_access_token(user.username, user.id, user.role, timedelta(minutes=30))
 
@@ -133,3 +138,22 @@ def update_user(user : user_dependency, db : db_dependency, update_user : Update
 
     db.commit()
     return JSONResponse(status_code=200, content={'message' : 'User updated successfully'})
+
+
+
+@router.put('/update_password')
+def update_password(user : user_dependency, db : db_dependency, update_password : UpdatePassword):
+
+    if user is None:
+        raise HTTPException(status_code=401, detail="User didnot loged in yet!!!")
+
+    user = db.query(Users).filter(Users.id == user.get('id')).first()
+
+    if not bcrypt_context.verify(update_password.current_password, user.hash_password):
+        raise HTTPException(status_code=401, detail="Oops, Current password didnot match!!!")
+
+    user.hash_password = bcrypt_context.hash(update_password.new_password)
+
+    db.add(user)
+    db.commit()
+    return JSONResponse(status_code=200, content={'message' : 'Password updated successfully'})
