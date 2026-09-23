@@ -40,3 +40,20 @@ def test_read_todos():
 def test_read_specific_todos():
     response = client.get('/todo/1011')
     assert response.status_code == status.HTTP_200_OK
+    
+    
+def test_create_todo():
+    db = SessionLocal()
+    db.query(Todos).filter(Todos.id == 0).delete()
+    db.commit()
+    
+    request_data = {
+        "id": 0,
+        "title": "string",
+        "description": "string",
+        "priority": 1,
+        "completed": False
+    }
+    response = client.post('/create-todo', json=request_data)
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json() == {'message' : 'Todo created successfully'}
