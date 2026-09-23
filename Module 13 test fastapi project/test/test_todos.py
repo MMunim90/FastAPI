@@ -57,3 +57,13 @@ def test_create_todo():
     response = client.post('/create-todo', json=request_data)
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json() == {'message' : 'Todo created successfully'}
+    
+    
+def test_update_todo():
+    
+    request_data = {
+        "title": "Testing updated",
+    }
+    response = client.put('/update_todo/1011', json=request_data)
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {'message' : 'Todo updated successfully'}
