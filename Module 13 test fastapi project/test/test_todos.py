@@ -59,11 +59,18 @@ def test_create_todo():
     assert response.json() == {'message' : 'Todo created successfully'}
     
     
-def test_update_todo():
     
+def test_update_todo():
     request_data = {
         "title": "Testing updated",
     }
     response = client.put('/update_todo/1011', json=request_data)
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {'message' : 'Todo updated successfully'}
+    
+    
+    
+def test_delete_todo():
+    response = client.delete('/delete_todo/1011')
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {'message' : 'Todo deleted successfully'}
